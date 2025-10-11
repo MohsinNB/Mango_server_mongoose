@@ -1,4 +1,6 @@
 import dotenv from "dotenv";
+import { Path } from "mongoose";
+require("dotenv").config();
 
 // dotenv.config({ path: path.join(process.cwd(), ".env") });
 dotenv.config({ path: "../.env" });
