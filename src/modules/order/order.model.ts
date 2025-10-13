@@ -1,5 +1,5 @@
-import { model, Schema } from "mongoose";
-import { IOrder } from "./order.interface";
+import { Model, model, Schema } from "mongoose";
+import { IOrder, IorderMethods, IorderModel } from "./order.interface";
 import Mango from "../mango/mango.model";
 
 const orderAddressSchema = new Schema({
@@ -8,7 +8,7 @@ const orderAddressSchema = new Schema({
   country: String,
   street: String,
 });
-const orderSchema = new Schema<IOrder>(
+const orderSchema = new Schema<IOrder, IorderModel, IorderMethods>(
   {
     userID: { type: Schema.Types.ObjectId, ref: "User", required: true },
     mangoID: { type: Schema.Types.ObjectId, ref: "Mango", required: true },
@@ -23,16 +23,24 @@ const orderSchema = new Schema<IOrder>(
   { versionKey: false, timestamps: true }
 );
 
-// orderSchema.pre("save", async function () {
-//   console.log("doc from pre", this);
+orderSchema.post("save", async function (doc, next) {
+  console.log("doc from post", doc);
 
-//   const mango = await Mango.findById(this.mango);
-//   if (!mango) {
-//     throw new Error("Mango not found");
-//   } else {
-//     this.totalPrice = mango.price * this.quantity;
-//   }
-// });
-const orderModel = model("order", orderSchema);
+  const mango = await Mango.findById(doc.mangoID);
+  if (!mango) {
+    throw new Error("Mango not found");
+  } else {
+    doc.totalPrice = mango.price * doc.quantity;
+  }
+  next();
+});
+
+orderSchema.method("checkStock", function checkStock(id) {
+  console.log(id);
+});
+const orderModel = model<IOrder, IorderModel, IorderMethods>(
+  "order",
+  orderSchema
+); //error happened
 
 export default orderModel;
