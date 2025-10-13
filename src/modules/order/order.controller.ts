@@ -19,7 +19,10 @@ const createOrder = async (req: Request, res: Response) => {
 };
 const getOrder = async (req: Request, res: Response) => {
   try {
-    const order = await orderModel.find();
+    const order = await orderModel
+      .find()
+      .populate("mangoID")
+      .populate("userID");
     res.send({
       success: true,
       message: "get order successfully",
@@ -27,7 +30,7 @@ const getOrder = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.send({
-      success: true,
+      success: false,
       message: "error happened",
       error,
     });
