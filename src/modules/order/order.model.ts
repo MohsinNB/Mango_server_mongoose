@@ -23,20 +23,32 @@ const orderSchema = new Schema<IOrder, IorderModel, IorderMethods>(
   { versionKey: false, timestamps: true }
 );
 
-orderSchema.post("save", async function (doc, next) {
-  console.log("doc from post", doc);
+orderSchema.pre("save", async function () {
+  // console.log("doc from pre", this);
 
-  const mango = await Mango.findById(doc.mangoID);
+  const mango = await Mango.findById(this.mangoID);
   if (!mango) {
     throw new Error("Mango not found");
   } else {
-    doc.totalPrice = mango.price * doc.quantity;
+    this.totalPrice = mango.price * this.quantity;
   }
-  next();
+
 });
 
-orderSchema.method("checkStock", function checkStock(id) {
-  console.log(id);
+// This is for instance methods **there is a different way to make this with static method**
+orderSchema.method("checkStock", async function checkStock(id) {
+  const mango = await Mango.findById(id)
+  if(!mango) {
+    throw new Error ("Mango not found")
+  }else if(mango.stock < this.quantity){
+    throw new Error("Insufficent stock")
+  }else{
+    await Mango.findByIdAndUpdate(id, {
+      $inc: { stock: -this.quantity },
+  }) }
+ 
+  return true
+  // console.log(id);
 });
 const orderModel = model<IOrder, IorderModel>(
   "order",
