@@ -3,7 +3,8 @@ import orderModel from "./order.model";
 
 const createOrder = async (req: Request, res: Response) => {
   try {
-    const order = await orderModel.create(req.body);
+    const order = await orderModel.create(req.body)
+    const checkStock = await order.checkStock(req.body.mangoID)
     res.send({
       success: true,
       message: "ORDER created successfully",

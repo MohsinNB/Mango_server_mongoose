@@ -38,7 +38,7 @@ orderSchema.post("save", async function (doc, next) {
 orderSchema.method("checkStock", function checkStock(id) {
   console.log(id);
 });
-const orderModel = model<IOrder, IorderModel, IorderMethods>(
+const orderModel = model<IOrder, IorderModel>(
   "order",
   orderSchema
 ); //error happened
