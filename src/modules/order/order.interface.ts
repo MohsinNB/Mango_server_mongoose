@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Model, Types } from "mongoose";
 
 // userId, mangoId, quantity, totalprice, status, address
 export interface IOrder {
@@ -14,3 +14,9 @@ export interface IOrder {
     street: string;
   };
 }
+
+export interface IorderMethods {
+  checkStock(id: string): Promise<any>;
+}
+
+export interface IorderModel extends Model<IOrder, {}, IorderMethods> {}
