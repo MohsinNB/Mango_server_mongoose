@@ -27,7 +27,6 @@ const userSchema = new Schema<Iuser>({
   },
   phone: {
     type: String,
-    unique: true,
     required: true,
     validate: {
       validator: function (v) {
@@ -43,6 +42,7 @@ const userSchema = new Schema<Iuser>({
       message: "{VALUE} is not acceptable",
     },
     required: true,
+    default: "customer",
   },
 });
 
